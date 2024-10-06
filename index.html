@@ -1,115 +1,420 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Vertical Stacking Slider</title>
-  <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
-  <style>
-    /* Basic setup for the container */
-    body, html {
-      height: 100%;
-      margin: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background-color: #f0f0f0;
-    }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+      Vertical Stacking Slider with Pagination and Draggable Scroller
+    </title>
+    <style>
+      h3,
+      p {
+        margin: 0px;
+      }
+      body {
+        display: flex;
+        position: relative;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background: #f0f0f0;
+        font-family: Arial, sans-serif;
+      }
 
-    .swiper-container {
-      width: 300px;
-      height: 400px;
-    }
+      .slider-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
 
-    .swiper-slide {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
+      .slider {
+        position: relative;
+        width: 643px;
+        height: 211px;
+        display: flex;
+        flex-direction: column;
+        border-radius: 12px;
+        cursor: grab;
+      }
 
-    .card {
-      width: 100%;
-      height: 100%;
-      background-color: #1b2431;
-      color: white;
-      padding: 20px;
-      border-radius: 15px;
-      box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
-      text-align: center;
-      transition: transform 0.3s ease;
-      font-family: Arial, sans-serif;
-    }
+      .card {
+        border-radius: 24px;
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        padding: 32px 46px;
+        background-color: #101828;
+        color: white;
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 32px;
+        font-size: 2em;
+        transition: all 0.5s ease-in-out, z-index 0.5s;
+      }
 
-    /* Stack effect */
-    .swiper-slide-prev .card,
-    .swiper-slide-next .card {
-      transform: translateY(20px) scale(0.95);
-      opacity: 0.8;
-    }
+      .controls {
+        position: absolute;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+      }
 
-    .swiper-slide-active .card {
-      transform: translateY(0) scale(1);
-      opacity: 1;
-    }
+      #prev,
+      #next {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 40px;
+        width: 40px;
+        padding: 8px;
+        border-radius: 100px;
+        border: 1px solid var(--Gray-200, #eaecf0);
+        background: #fff;
+        z-index: 10;
+        cursor: pointer;
+      }
 
-    .swiper-button-next, .swiper-button-prev {
-      color: #000;
-    }
+      .btn-icon {
+        height: 24px;
+        width: 24px;
+      }
 
-  </style>
-</head>
-<body>
+      /* Pagination */
+      .pagination {
+        display: flex;
+        gap: 10px;
+        margin-top: 50px;
+      }
 
-  <!-- Swiper Container -->
-  <div class="swiper-container">
-    <div class="swiper-wrapper">
-      <div class="swiper-slide">
-        <div class="card">
-          <h2>Centralised Community</h2>
-          <p>Seamless collaboration, resource sharing, and event management.</p>
-        </div>
+      .dot {
+        width: 69px;
+        height: 2px;
+        background-color: #d0d5dd;
+        transition: background-color 0.3s;
+      }
+
+      .dot.active {
+        background-color: #333;
+      }
+      .cardTitle {
+        color: var(--Gray-200, #eaecf0);
+
+        /* Urbanist/Title/32/Bold */
+        font-family: Urbanist;
+        font-size: 32px;
+        font-style: normal;
+        font-weight: 700;
+        line-height: 40px; /* 125% */
+        margin: 0px;
+      }
+      .cardDesc {
+        color: var(--Gray-100, #f2f4f7);
+
+        /* Urbanist/Body/24/Semibold */
+        font-family: Urbanist;
+        font-size: 24px;
+        font-style: normal;
+        font-weight: 600;
+        line-height: 32px; /* 133.333% */
+        margin: 0px;
+      }
+
+      .cardRightDiv {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 14px;
+        padding-left: 35px;
+        border-left: 1px solid #d0d5dd;
+      }
+
+      .cardIcon {
+        height: 43px;
+        width: 43px;
+      }
+
+      /* Responsive Styles */
+      @media (max-width: 1024px) {
+        .slider {
+          width: 600px;
+        }
+        .card {
+          gap: 32px;
+          padding: 32px 46px;
+        }
+        .cardTitle {
+          font-size: 32px;
+          line-height: 36px; /* 125% */
+        }
+        .cardDesc {
+          font-size: 20px;
+          line-height: 28px; /* 133.333% */
+        }
+
+        .cardRightDiv {
+          gap: 14px;
+          padding-left: 32px;
+        }
+
+        .cardIcon {
+          height: 43px;
+          width: 43px;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .slider {
+          width: 450px;
+        }
+        .card {
+          gap: 24px;
+          padding: 32px 32px;
+        }
+        .cardTitle {
+          font-size: 22px;
+          line-height: 24px; /* 125% */
+        }
+        .cardDesc {
+          font-size: 16px;
+          line-height: 20px; /* 133.333% */
+        }
+
+        .cardRightDiv {
+          gap: 12px;
+          padding-left: 24px;
+        }
+
+        .cardIcon {
+          height: 43px;
+          width: 43px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .slider {
+          width: 320px;
+        }
+        .card {
+          gap: 16px;
+          padding: 20px;
+        }
+        .cardTitle {
+          font-size: 18px;
+          line-height: 24px; /* 125% */
+        }
+        .cardDesc {
+          font-size: 12px;
+          line-height: 18px; /* 133.333% */
+        }
+
+        .cardRightDiv {
+          gap: 8px;
+          padding-left: 16px;
+        }
+
+        .cardIcon {
+          height: 32px;
+          width: 32px;
+        }
+        .dot {
+          width: 40px;
+          height: 2px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="slider-container">
+      <div class="slider" id="slider"></div>
+
+      <div class="pagination" id="pagination"></div>
+
+      <div class="controls">
+        <button id="prev">
+          <img
+            class="btn-icon"
+            src="https://i.ibb.co/vPc2G0c/Website-Icons.png"
+            alt="Previous"
+          />
+        </button>
+        <button id="next">
+          <img
+            class="btn-icon"
+            src="https://i.ibb.co/2P6RMkW/Website-Icons.png"
+            alt="Next"
+          />
+        </button>
       </div>
-      <div class="swiper-slide">
-        <div class="card">
-          <h2>Efficient Tools</h2>
-          <p>Tools for streamlined decision-making and user profiles.</p>
-        </div>
-      </div>
-      <div class="swiper-slide">
-        <div class="card">
-          <h2>Analytics Dashboard</h2>
-          <p>Get insights into your community engagement and activities.</p>
-        </div>
-      </div>
-      <!-- Add more slides as needed -->
     </div>
 
-    <!-- Navigation Buttons -->
-    <div class="swiper-button-next"></div>
-    <div class="swiper-button-prev"></div>
-  </div>
+    <script>
+      const pagination = document.getElementById("pagination");
+      let currentIndex = 0;
+      let startY = 0,
+        currentY = 0,
+        dragging = false;
 
-  <!-- Swiper JS -->
-  <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+      // JSON data
+      const data = {
+        features: [
+          {
+            icon: "https://i.ibb.co/17w5j39/Website-Icons.png",
+            heading: "Centralised Community",
+            description:
+              "Seamless collaboration, resource sharing, event management, decision-making tools, user profiles, and analytics for vibrant community engagement.",
+          },
+          {
+            icon: "https://i.ibb.co/17w5j39/Website-Icons.png",
+            heading: "Centralised Community",
+            description:
+              "Seamless collaboration, resource sharing, event management, decision-making tools, user profiles, and analytics for vibrant community engagement.",
+          },
+          {
+            icon: "https://i.ibb.co/17w5j39/Website-Icons.png",
+            heading: "Centralised Community",
+            description:
+              "Seamless collaboration, resource sharing, event management, decision-making tools, user profiles, and analytics for vibrant community engagement.",
+          },
+          {
+            icon: "https://i.ibb.co/17w5j39/Website-Icons.png",
+            heading: "Centralised Community",
+            description:
+              "Seamless collaboration, resource sharing, event management, decision-making tools, user profiles, and analytics for vibrant community engagement.",
+          },
+        ],
+      };
 
-  <script>
-    var swiper = new Swiper('.swiper-container', {
-      direction: 'vertical',  // Vertical slider
-      loop: true,             // Enable continuous loop mode
-      slidesPerView: 1,       // Show one card at a time
-      centeredSlides: true,   // Always center the active slide
-      spaceBetween: 0,        // No space between slides to achieve the stack effect
-      navigation: {
-        nextEl: '.swiper-button-next',
-        prevEl: '.swiper-button-prev',
-      },
-      on: {
-        slideChangeTransitionEnd: function () {
-          // Custom behavior after each slide change, if needed
+      // Function to generate cards
+      function generateCards() {
+        const container = document.getElementById("slider");
+        container.innerHTML = "";
+
+        data.features.forEach((item) => {
+          const card = document.createElement("div");
+          const cardRightDiv = document.createElement("div");
+          card.classList.add("card");
+          cardRightDiv.classList.add("cardRightDiv");
+
+          const icon = document.createElement("img");
+          icon.classList.add("cardIcon");
+          icon.src = item.icon;
+          icon.alt = item.heading;
+
+          const heading = document.createElement("h3");
+          heading.classList.add("cardTitle");
+          heading.textContent = item.heading;
+
+          const description = document.createElement("p");
+          description.classList.add("cardDesc");
+          description.textContent = item.description;
+
+          card.appendChild(icon);
+          card.appendChild(cardRightDiv);
+          cardRightDiv.appendChild(heading);
+          cardRightDiv.appendChild(description);
+
+          container.appendChild(card);
+        });
+      }
+
+      // Call the function to generate cards on page load
+      generateCards();
+
+      const cards = document.querySelectorAll(".card");
+
+      // Create pagination dots
+      cards.forEach((_, index) => {
+        const dot = document.createElement("div");
+        dot.classList.add("dot");
+        if (index === 0) dot.classList.add("active");
+        pagination.appendChild(dot);
+      });
+
+      const dots = document.querySelectorAll(".dot");
+
+      function updateStack() {
+        let offsetY;
+        if (window.innerWidth <= 375) {
+          offsetY = 20;
+        } else if (window.innerWidth <= 425) {
+          offsetY = 20;
+        } else if (window.innerWidth <= 768) {
+          offsetY = 25;
+        } else if (window.innerWidth <= 1024) {
+          offsetY = 35;
+        } else {
+          offsetY = 40;
         }
-      },
-    });
-  </script>
 
-</body>
+        cards.forEach((card, index) => {
+          const order = (index - currentIndex + cards.length) % cards.length;
+          const scaleX = Math.pow(0.9222395023328149, order);
+          const scaleY = Math.pow(0.8483412322274881, order);
+
+          card.style.zIndex = cards.length - order;
+          card.style.transform = `translateY(${
+            -order * offsetY
+          }px) scale(${scaleX}, ${scaleY})`;
+
+          card.style.backgroundColor =
+            index === currentIndex ? "#101828" : "rgba(71, 84, 103, 0.24)";
+        });
+        updatePagination();
+      }
+
+      window.addEventListener("resize", updateStack);
+      updateStack();
+
+      function updatePagination() {
+        dots.forEach((dot, index) => {
+          dot.classList.toggle("active", index === currentIndex);
+        });
+      }
+
+      document.getElementById("next").addEventListener("click", () => {
+        currentIndex = (currentIndex + 1) % cards.length;
+        updateStack();
+      });
+
+      document.getElementById("prev").addEventListener("click", () => {
+        currentIndex = (currentIndex - 1 + cards.length) % cards.length;
+        updateStack();
+      });
+
+      // Add dragging functionality
+      const slider = document.getElementById("slider");
+
+      slider.addEventListener("mousedown", (e) => {
+        startY = e.clientY;
+        dragging = true;
+        slider.style.cursor = "grabbing";
+      });
+
+      document.addEventListener("mousemove", (e) => {
+        if (dragging) {
+          currentY = e.clientY;
+          const diffY = startY - currentY;
+          if (diffY > 50) {
+            currentIndex = (currentIndex + 1) % cards.length;
+            updateStack();
+            startY = currentY;
+          } else if (diffY < -50) {
+            currentIndex = (currentIndex - 1 + cards.length) % cards.length;
+            updateStack();
+            startY = currentY;
+          }
+        }
+      });
+
+      document.addEventListener("mouseup", () => {
+        dragging = false;
+        slider.style.cursor = "grab";
+      });
+    </script>
+  </body>
 </html>
