@@ -255,9 +255,6 @@
     <script>
       const pagination = document.getElementById("pagination");
       let currentIndex = 0;
-      let startY = 0,
-        currentY = 0,
-        dragging = false;
 
       // JSON data
       const data = {
@@ -386,35 +383,8 @@
         updateStack();
       });
 
-      // Add dragging functionality
-      const slider = document.getElementById("slider");
-
-      slider.addEventListener("mousedown", (e) => {
-        startY = e.clientY;
-        dragging = true;
-        slider.style.cursor = "grabbing";
-      });
-
-      document.addEventListener("mousemove", (e) => {
-        if (dragging) {
-          currentY = e.clientY;
-          const diffY = startY - currentY;
-          if (diffY > 50) {
-            currentIndex = (currentIndex + 1) % cards.length;
-            updateStack();
-            startY = currentY;
-          } else if (diffY < -50) {
-            currentIndex = (currentIndex - 1 + cards.length) % cards.length;
-            updateStack();
-            startY = currentY;
-          }
-        }
-      });
-
-      document.addEventListener("mouseup", () => {
-        dragging = false;
-        slider.style.cursor = "grab";
-      });
+    
+    
     </script>
   </body>
 </html>
