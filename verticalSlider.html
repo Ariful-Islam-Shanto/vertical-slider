@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vertical Stacking Slider</title>
+  <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
+  <style>
+    /* Basic setup for the container */
+    body, html {
+      height: 100%;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #f0f0f0;
+    }
+
+    .swiper-container {
+      width: 300px;
+      height: 400px;
+    }
+
+    .swiper-slide {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .card {
+      width: 100%;
+      height: 100%;
+      background-color: #1b2431;
+      color: white;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
+      text-align: center;
+      transition: transform 0.3s ease;
+      font-family: Arial, sans-serif;
+    }
+
+    /* Stack effect */
+    .swiper-slide-prev .card,
+    .swiper-slide-next .card {
+      transform: translateY(20px) scale(0.95);
+      opacity: 0.8;
+    }
+
+    .swiper-slide-active .card {
+      transform: translateY(0) scale(1);
+      opacity: 1;
+    }
+
+    .swiper-button-next, .swiper-button-prev {
+      color: #000;
+    }
+
+  </style>
+</head>
+<body>
+
+  <!-- Swiper Container -->
+  <div class="swiper-container">
+    <div class="swiper-wrapper">
+      <div class="swiper-slide">
+        <div class="card">
+          <h2>Centralised Community</h2>
+          <p>Seamless collaboration, resource sharing, and event management.</p>
+        </div>
+      </div>
+      <div class="swiper-slide">
+        <div class="card">
+          <h2>Efficient Tools</h2>
+          <p>Tools for streamlined decision-making and user profiles.</p>
+        </div>
+      </div>
+      <div class="swiper-slide">
+        <div class="card">
+          <h2>Analytics Dashboard</h2>
+          <p>Get insights into your community engagement and activities.</p>
+        </div>
+      </div>
+      <!-- Add more slides as needed -->
+    </div>
+
+    <!-- Navigation Buttons -->
+    <div class="swiper-button-next"></div>
+    <div class="swiper-button-prev"></div>
+  </div>
+
+  <!-- Swiper JS -->
+  <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+
+  <script>
+    var swiper = new Swiper('.swiper-container', {
+      direction: 'vertical',  // Vertical slider
+      loop: true,             // Enable continuous loop mode
+      slidesPerView: 1,       // Show one card at a time
+      centeredSlides: true,   // Always center the active slide
+      spaceBetween: 0,        // No space between slides to achieve the stack effect
+      navigation: {
+        nextEl: '.swiper-button-next',
+        prevEl: '.swiper-button-prev',
+      },
+      on: {
+        slideChangeTransitionEnd: function () {
+          // Custom behavior after each slide change, if needed
+        }
+      },
+    });
+  </script>
+
+</body>
+</html>
